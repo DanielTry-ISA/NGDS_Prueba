@@ -3,12 +3,12 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 import os
 from pymongo import MongoClient
+from fastapi.middleware.cors import CORSMiddleware
 
 #Variables de entorno
 USR = None
 PWD = None
 CLUS = None
-
 
 
 
@@ -24,6 +24,8 @@ def load_env():
 load_env()
 
 app = FastAPI()
+
+
 
 client = MongoClient(f'mongodb+srv://developer:{PWD}@datacluster.hfoiucp.mongodb.net/?appName={CLUS}')
 
@@ -82,3 +84,11 @@ def aggregate_data():
 @app.get('/anomalias')
 def anomaly_summary():
     return {'texto':'también funciona :v'}
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
