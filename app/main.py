@@ -30,6 +30,8 @@ client = MongoClient(f'mongodb+srv://developer:{PWD}@datacluster.hfoiucp.mongodb
 db = client['sample_analytics']
 
 accounts_collection = db['accounts']
+customers_collection = db['customers']
+transactions_collection = db['transactions']
 
 @app.get('/')
 def root():
@@ -37,7 +39,24 @@ def root():
 
 # mongoUri = f'mongodb+srv://developer:{PWD}@datacluster.hfoiucp.mongodb.net/?appName={CLUS}'
 
+#Endpoint
+@app.get('/resumen')
+def get_data():
+    #Verificar si es necesario usar .limit
+    # transactions = list(transactions_collection.find({}, {"_id":0}).limit(100))
+    accounts = list(accounts_collection.find({},{"_id":0}))
+    customers = list(customers_collection.find({},{"_id":0}))
+    transactions = list(transactions_collection.find({},{"_id":0}))
+    return {'accounts': accounts,
+            'customers': customers,
+            'transactions': transactions
+    }
 
+@app.get('/metricasagregadas')
+def aggregate_data():
+    return {'texto':'funciona'}
 # print(f"el usuario es: {USR} y el cluster es: {CLUS} y la uri es{return_uri}")
 
-
+@app.get('/anomalias')
+def anomaly_summary():
+    return {'texto':'también funciona :v'}
