@@ -2,22 +2,42 @@ import numpy as np
 from dotenv import load_dotenv
 from fastapi import FastAPI
 import os
+from pymongo import MongoClient
 
 #Variables de entorno
-usr = None
-pwd = None
-clus = None
+USR = None
+PWD = None
+CLUS = None
 
 
+
+
+# Carga de variables de entorno
 def load_env():
 
-    global usr,pwd,clus
+    global USR,PWD,CLUS
     load_dotenv()
-    usr = os.getenv("MONGO_USR")
-    pwd = os.getenv("MONGO_PWD")
-    clus = os.getenv("CLUSTER")
+    USR = os.getenv("MONGO_USR")
+    PWD = os.getenv("MONGO_PWD")
+    CLUS = os.getenv("CLUSTER")
 
 load_env()
 
-print(f"el usuario es: {usr} y el cluster es: {clus}")
+app = FastAPI()
+
+client = MongoClient(f'mongodb+srv://developer:{PWD}@datacluster.hfoiucp.mongodb.net/?appName={CLUS}')
+
+db = client['sample_analytics']
+
+accounts_collection = db['accounts']
+
+@app.get('/')
+def root():
+    return{"messsage":"API Funcionando"}
+
+# mongoUri = f'mongodb+srv://developer:{PWD}@datacluster.hfoiucp.mongodb.net/?appName={CLUS}'
+
+
+# print(f"el usuario es: {USR} y el cluster es: {CLUS} y la uri es{return_uri}")
+
 
