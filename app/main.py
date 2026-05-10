@@ -52,9 +52,31 @@ def get_data():
             'transactions': transactions
     }
 
+
+
+@app.get('/customers/summary')
+def summary():
+    return "El endpoint funciona"
+
+
 @app.get('/metricasagregadas')
 def aggregate_data():
-    return {'texto':'funciona'}
+    cuentas_numproductos = [{
+        "$project": {
+            "num_productos" : {"$size": "$products"}
+        }},
+        {"$group":
+         {
+          "_id": "$num_productos",
+          "cantidad_cuentas": {"$sum":1}   
+         }
+         },
+         {
+             "$sort": {"_id":1}
+         }
+    ]
+    resultados = list(accounts_collection.aggregate(cuentas_numproductos))
+    return resultados
 # print(f"el usuario es: {USR} y el cluster es: {CLUS} y la uri es{return_uri}")
 
 @app.get('/anomalias')
