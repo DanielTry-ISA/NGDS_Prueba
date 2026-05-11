@@ -73,21 +73,54 @@ async function cargarCuentasChart() {
         type: "bar",
 
         data: {
+
             labels: labels,
 
             datasets: [{
-                label: "Cantidad cuentas",
-                data: valores
+                label: "Cantidad de cuentas",
+                data: valores,
+                backgroundColor: "#4e73df"
             }]
         },
 
         options: {
+
+            responsive: true,
+
             plugins: {
+
                 title: {
                     display: true,
                     text: "Perfil de clientes según la cantidad de cuentas",
                     font: {
-                        size:20
+                        size: 20
+                    }
+                }
+            },
+
+            scales: {
+
+                x: {
+
+                    title: {
+                        display: true,
+                        text: "Número de productos por cuenta",
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    title: {
+                        display: true,
+                        text: "Cantidad de clientes",
+                        font: {
+                            size: 14
+                        }
                     }
                 }
             }
@@ -100,7 +133,7 @@ async function cargarTopClientesChart() {
         "topclientes"
     );
 
-    const labels = data.map(x => x.username);
+    const labels = data.map(x => x.cliente);
 
     const volumen = data.map(
         x => x.volumen_total
@@ -144,8 +177,35 @@ async function cargarTopClientesChart() {
                         size:20
                     }
                 }
+            },
+           scales: {
+
+                x: {
+
+                    title: {
+                        display: true,
+                        text: "Cliente",
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    title: {
+                        display: true,
+                        text: "Volumen transaccional(USD)",
+                        font: {
+                            size: 14
+                        }
+                    }
+                }
             }
         }
+        
     });
 }
 async function cargarVolumenMensualChart() {
@@ -182,6 +242,32 @@ async function cargarVolumenMensualChart() {
                     text: "Volumen histórico por mes",
                     font: {
                         size:20
+                    }
+                }
+            },
+            scales: {
+
+                x: {
+
+                    title: {
+                        display: true,
+                        text: "Mes (03/1962-01/2017)",
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    title: {
+                        display: true,
+                        text: "Volumen transaccional(USD)",
+                        font: {
+                            size: 14
+                        }
                     }
                 }
             }

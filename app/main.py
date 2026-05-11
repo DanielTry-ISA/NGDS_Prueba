@@ -23,42 +23,24 @@ def load_env():
 
 load_env()
 
+#Aplicación
 app = FastAPI()
 
 
-
+#Conexión con MongoDB
 client = MongoClient(f'mongodb+srv://developer:{PWD}@datacluster.hfoiucp.mongodb.net/?appName={CLUS}')
 
-db = client['sample_analytics']
 
+#Seleccion de base de datos y tablas
+db = client['sample_analytics']
 accounts_collection = db['accounts']
 customers_collection = db['customers']
 transactions_collection = db['transactions']
 
+#Endpoint de bienvenida
 @app.get('/')
 def root():
     return{"messsage":"Sea usted bienvenido!!!"}
-
-# mongoUri = f'mongodb+srv://developer:{PWD}@datacluster.hfoiucp.mongodb.net/?appName={CLUS}'
-
-#Endpoint
-# @app.get('/resumen')
-# def get_data():
-#     #Verificar si es necesario usar .limit
-#     # transactions = list(transactions_collection.find({}, {"_id":0}).limit(100))
-#     accounts = list(accounts_collection.find({},{"_id":0}))
-#     customers = list(customers_collection.find({},{"_id":0}))
-#     transactions = list(transactions_collection.find({},{"_id":0}))
-#     return {'accounts': accounts,
-#             'customers': customers,
-#             'transactions': transactions
-#     }
-
-
-
-# @app.get('/customers/summary')
-# def summary():
-#     return "El endpoint funciona"
 
 
 
@@ -192,7 +174,7 @@ def total_transacciones():
 
 ##GRAFICAS
 
-#
+#Numero de usuarios con 1, 2, 3, 4 y 5 cuentas
 @app.get('/cuentasporusuario')
 def aggregate_data():
     try:
@@ -219,6 +201,7 @@ def aggregate_data():
 
 
 
+#Top 10 clientes con mayor volumen transaccional
 @app.get('/topclientes')
 def top_clientes():
     try:
@@ -255,6 +238,8 @@ def top_clientes():
         raise HTTPException(status_code=500, detail=str(e))
     
 
+
+#Volumen de dinero en movimiento por mes
 @app.get('/volumenes')
 def volumen_por_mes():
     try:
@@ -289,7 +274,7 @@ def volumen_por_mes():
 
 
     
-
+#Proporción de productos utilizados por los clientes
 @app.get('/proporcionproductos')
 def proporcion_productos():
     pl_prop_productos = [
@@ -323,7 +308,10 @@ def proporcion_productos():
 
 
 # Tabla
-
+#Tabla de anomalias
+# número de transacciones muy grandes
+# cuentas con un límite de 10000
+# Clientes con algun beneficio platinum
 @app.get('/anomalias')
 def anomaly_summary():
     try:
@@ -448,14 +436,14 @@ def anomaly_summary():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-#filtro
+#filtro de número de teansacciones por año
 @app.get("/transacciones/anio/{year}")
 async def transacciones_por_anio(year: int):
     pipeline = [
-        # 1. Descomponer el array de transacciones (un doc por transacción)
+        
         { "$unwind": "$transactions" },
 
-        # 2. Filtrar las transacciones cuyo año coincida
+        
         {
             "$match": {
                 "$expr": {
@@ -464,7 +452,7 @@ async def transacciones_por_anio(year: int):
             }
         },
 
-        # 3. Contar el total
+        
         {
             "$count": "total_transacciones"
         }
@@ -477,7 +465,7 @@ async def transacciones_por_anio(year: int):
     return { "year": year, "total_transacciones": 0 }
     
 
-
+#Cors
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
