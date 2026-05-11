@@ -149,6 +149,18 @@ async function cargarVolumenMensualChart() {
                 label: "Volumen mensual",
                 data: valores
             }]
+        },
+
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Volumen histórico por mes",
+                    font: {
+                        size:20
+                    }
+                }
+            }
         }
     });
 }
