@@ -1,7 +1,6 @@
-import numpy as np
+import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
-import os
 from pymongo import MongoClient
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import HTTPException
