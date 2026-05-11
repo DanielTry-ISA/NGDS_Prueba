@@ -114,7 +114,7 @@ def activos_inactivos():
 
 
 
-
+#Cuarto Indicador cantidad de dinero total movido en todas las transacciones
 @app.get('/volumen')
 def total_dinero():
     try:
@@ -164,7 +164,8 @@ def total_dinero():
     except Exception as e:
         print("Error en pipeline:", str(e))   # ← Esto te ayudará a ver el error en consola
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+#Numero total de transacciones
 @app.get('/totaltransacciones')
 def total_transacciones():
     try:
@@ -192,6 +193,7 @@ def total_transacciones():
 
 ##GRAFICAS
 
+#
 @app.get('/cuentasporusuario')
 def aggregate_data():
     try:
@@ -448,8 +450,32 @@ def anomaly_summary():
         raise HTTPException(status_code=500, detail=str(e))
 
 #filtro
-# @app.get('/filtro')
+@app.get("/transacciones/anio/{year}")
+async def transacciones_por_anio(year: int):
+    pipeline = [
+        # 1. Descomponer el array de transacciones (un doc por transacción)
+        { "$unwind": "$transactions" },
 
+        # 2. Filtrar las transacciones cuyo año coincida
+        {
+            "$match": {
+                "$expr": {
+                    "$eq": [{ "$year": "$transactions.date" }, year]
+                }
+            }
+        },
+
+        # 3. Contar el total
+        {
+            "$count": "total_transacciones"
+        }
+    ]
+
+    result = list(transactions_collection.aggregate(pipeline))
+
+    if result:
+        return { "year": year, "total_transacciones": result[0]["total_transacciones"] }
+    return { "year": year, "total_transacciones": 0 }
     
 
 

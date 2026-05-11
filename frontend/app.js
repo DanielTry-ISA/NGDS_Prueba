@@ -51,7 +51,7 @@ async function cargarVolumenKPI() {
 
     document.getElementById("volumenKPI")
         .innerText =
-        `$${data.volumen_total_miles.toLocaleString()}`;
+        `$${data.volumen_total_miles.toLocaleString() + ' USD'}`;
 }
 async function cargarCuentasChart() {
 
@@ -79,6 +79,18 @@ async function cargarCuentasChart() {
                 label: "Cantidad cuentas",
                 data: valores
             }]
+        },
+
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Perfil de clientes según la cantidad de cuentas",
+                    font: {
+                        size:20
+                    }
+                }
+            }
         }
     });
 }
@@ -121,6 +133,18 @@ async function cargarTopClientesChart() {
                     data: transacciones
                 }
             ]
+        },
+
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Top 10 clientes con mayor volumen transaccional",
+                    font: {
+                        size:20
+                    }
+                }
+            }
         }
     });
 }
@@ -180,18 +204,41 @@ async function cargarProductosChart() {
         .getElementById("productosChart");
 
     new Chart(ctx, {
+    type: "pie",
+    data: {
+        labels: labels,
+        datasets: [{
+            data: valores
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                    display: true,
+                    text: "Composición del Uso de Productos Financieros",
+                    font: {
+                        size:20
+                    }
+                },
+            tooltip: {
+                callbacks: {
+                    label: (context) => {
 
-        type: "pie",
+                        const data = context.chart.data.datasets[0].data;
 
-        data: {
+                        const total = data.reduce((a, b) => a + b, 0);
 
-            labels: labels,
+                        const value = context.raw;
 
-            datasets: [{
-                data: valores
-            }]
+                        const percentage = ((value / total) * 100).toFixed(2);
+
+                        return `${context.label}: ${value} (${percentage}%)`;
+                    }
+                }
+            }
         }
-    });
+    }
+});
 }
 async function cargarTabla() {
 
@@ -216,6 +263,59 @@ async function cargarTabla() {
         tbody.innerHTML += row;
     });
 }
+async function cargarTablaAnomalias() {
+
+    const data = await obtenerDatos("anomalias");
+
+    const tbody = document.querySelector("#anomaliesTable tbody");
+
+    const rows = [
+
+        {
+            tipo: "Transacciones muy grandes",
+            descripcion: "Transacciones con montos extremadamente altos",
+            cantidad: data.transacciones_muy_grandes
+        },
+
+        {
+            tipo: "Cuentas con límites altos",
+            descripcion: "Cuentas con límite máximo de crédito (10000)",
+            cantidad: data.cuentas_limites_muy_altos
+        },
+
+        {
+            tipo: "Clientes Platinum",
+            descripcion: "Clientes con algún beneficio de categoría platinum",
+            cantidad: data.clientes_con_platinum
+        }
+    ];
+
+    rows.forEach(r => {
+
+        const row = `
+            <tr>
+                <td>${r.tipo}</td>
+                <td>${r.descripcion}</td>
+                <td>${r.cantidad}</td>
+            </tr>
+        `;
+
+        tbody.innerHTML += row;
+    });
+}
+async function cargarTransaccionesPorAnio() {
+    const year = document.getElementById("yearSelect").value;
+
+    if (!year) {
+        document.getElementById("transaccionesAnioKPI").innerText = "";
+        return;
+    }
+
+    const data = await obtenerDatos(`transacciones/anio/${year}`);
+
+    document.getElementById("transaccionesAnioKPI").innerText =
+        data.total_transacciones.toLocaleString();
+}
 
 cargarClientesKPI();
 cargarCuentasKPI();
@@ -226,5 +326,7 @@ cargarCuentasChart();
 cargarTopClientesChart();
 cargarVolumenMensualChart();
 cargarProductosChart();
+cargarTablaAnomalias();
 
 cargarTabla();
+cargarTransaccionesPorAnio()
