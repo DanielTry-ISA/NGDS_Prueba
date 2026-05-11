@@ -15,11 +15,89 @@
 
 <body>
 
-    <h1>Distribución de Productos por Cuenta</h1>
+    <h1>Customer Analytics Dashboard</h1>
 
-    <div class="chart-container">
-        <canvas id="productosChart"></canvas>
+    <!-- ================= KPIs ================= -->
+
+    <div class="kpi-container">
+
+        <div class="kpi-card">
+            <h3>Total Clientes</h3>
+            <p id="clientesKPI"></p>
+        </div>
+
+        <div class="kpi-card">
+            <h3>Total Cuentas</h3>
+            <p id="cuentasKPI"></p>
+        </div>
+
+        <div class="kpi-card">
+            <h3>Clientes</h3>
+
+            <div class="dual-kpi">
+                <div>
+                    <span>Activos</span>
+                    <p id="activosKPI"></p>
+                </div>
+
+                <div>
+                    <span>Inactivos</span>
+                    <p id="inactivosKPI"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <h3>Volumen Total</h3>
+            <p id="volumenKPI"></p>
+        </div>
+
     </div>
+
+    <!-- ================= CHARTS ================= -->
+
+    <div class="charts-grid">
+
+        <div class="chart-card">
+            <canvas id="cuentasChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <canvas id="topClientesChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <canvas id="volumenMensualChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <canvas id="productosChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- ================= TABLA ================= -->
+
+    <div class="table-container">
+
+        <h2>Resumen Clientes</h2>
+
+        <table id="summaryTable">
+
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Volumen</th>
+                    <th>Transacciones</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script src="app.js"></script>
 

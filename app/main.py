@@ -254,7 +254,7 @@ def top_clientes():
         raise HTTPException(status_code=500, detail=str(e))
     
 
-@app.get('/volumenmes')
+@app.get('/volumenes')
 def volumen_por_mes():
     try:
         pipeline_volumen_mes = [
