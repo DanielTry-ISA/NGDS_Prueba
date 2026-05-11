@@ -38,7 +38,7 @@ transactions_collection = db['transactions']
 
 @app.get('/')
 def root():
-    return{"messsage":"API Funcionando"}
+    return{"messsage":"Sea usted bienvenido!!!"}
 
 # mongoUri = f'mongodb+srv://developer:{PWD}@datacluster.hfoiucp.mongodb.net/?appName={CLUS}'
 
@@ -67,21 +67,34 @@ def root():
 #Primer indicador: numero de clientes
 @app.get('/numeroclientes')
 def numero_clientes():
-    pl_total_clientes = [{"$count": "total_clientes"}]
-    result = list(customers_collection.aggregate(pl_total_clientes))
-    return result
+    try:
+        pl_total_clientes = [{"$count": "total_clientes"}]
+        result = list(customers_collection.aggregate(pl_total_clientes))
+        return result
+    except Exception as e:
+        print("Error:", str(e))   
+        raise HTTPException(status_code=500, detail=str(e))
+
+    
 
 #Segundo indicador: numero de cuentas
 @app.get('/totalcuentas')
 def numero_cuentas():
-    pl_total_cuentas = [{"$count": "total_cuentas"}]
-    result = list(accounts_collection.aggregate(pl_total_cuentas))
-    return result
+    try:
+        pl_total_cuentas = [{"$count": "total_cuentas"}]
+        result = list(accounts_collection.aggregate(pl_total_cuentas))
+        return result
+    except Exception as e:
+        print("Error:", str(e))   
+        raise HTTPException(status_code=500, detail=str(e))
+
+    
 
 #Tercer indicador: #clientes activos y # clientes inactivos
 @app.get('/clientesacteinact')
 def activos_inactivos():
-    pl_activos_inactivos = [{'$group': {"_id": '$active',
+    try:
+        pl_activos_inactivos = [{'$group': {"_id": '$active',
                                        "cantidad": {'$sum':1}
                                        }},
                                        {"$project":{"_id":0,
@@ -90,8 +103,13 @@ def activos_inactivos():
                                                     }
                                            
                                        }]
-    result = list(customers_collection.aggregate(pl_activos_inactivos))
-    return result
+        result = list(customers_collection.aggregate(pl_activos_inactivos))
+        return result
+    except Exception as e:
+        print("Error:", str(e))   
+        raise HTTPException(status_code=500, detail=str(e))
+
+    
 
 
 
@@ -148,7 +166,7 @@ def total_dinero():
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.get('/totaltransacciones')
-def mock():
+def total_transacciones():
     try:
         pipeline_total_transacciones = [
     {
@@ -176,7 +194,8 @@ def mock():
 
 @app.get('/cuentasporusuario')
 def aggregate_data():
-    cuentas_numproductos = [{
+    try:
+        cuentas_numproductos = [{
         "$project": {
             "num_productos" : {"$size": "$products"}
         }},
@@ -190,13 +209,19 @@ def aggregate_data():
              "$sort": {"_id":1}
          }
     ]
-    resultados = list(accounts_collection.aggregate(cuentas_numproductos))
-    return resultados
+        resultados = list(accounts_collection.aggregate(cuentas_numproductos))
+        return resultados
+    
+    except Exception as e:
+        print("Error:", str(e))   
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.get('/topclientes')
 def top_clientes():
-    pipeline_top_clientes = [
+    try:
+        pipeline_top_clientes = [
     {"$lookup": {
         "from": "transactions",
         "localField": "accounts",
@@ -222,8 +247,12 @@ def top_clientes():
         "transacciones": 1
     }}
 ]
-    result = list(customers_collection.aggregate(pipeline_top_clientes))
-    return result
+        result = list(customers_collection.aggregate(pipeline_top_clientes))
+        return result
+    except Exception as e:
+        print("Error:", str(e))   
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 @app.get('/volumenmes')
 def volumen_por_mes():
@@ -303,7 +332,7 @@ def anomaly_summary():
         "$unwind": "$transactions"
     },
 
-    # 2. Convertir total a número
+    
     {
         "$set": {
             "totalValue": {
@@ -418,8 +447,8 @@ def anomaly_summary():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-
+#filtro
+# @app.get('/filtro')
 
     
 
